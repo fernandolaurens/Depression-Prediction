@@ -32,8 +32,8 @@ def train_and_predict(outcome_data):
     knn = KNeighborsClassifier(n_neighbors=14)
     knn.fit(X_train, y_train)
 
-    # Make a prediction based on user input
-    prediction = knn.predict([outcome_data])
+    # Make a prediction based on user input (ensure outcome_data is 2D array)
+    prediction = knn.predict(np.array(outcome_data).reshape(1, -1))
     
     # Calculate accuracy of the model
     y_pred = knn.predict(X_test)
@@ -89,19 +89,18 @@ employment_status = st.selectbox("Select Employment Status", options=list(employ
 # Smoking Status selection with mapped labels
 smoking_status = st.selectbox("Select Smoking Status", options=list(smoking_mapping.values()), help="Select the smoking habit (smoker or non-smoker).")
 
-# When making predictions, map back to numerical values
+# Map back to numerical values for prediction
 selected_education_level = list(education_mapping.keys())[list(education_mapping.values()).index(education_level)]
 selected_marital_status = list(marital_status_mapping.keys())[list(marital_status_mapping.values()).index(marital_status)]
 selected_employment_status = list(employment_mapping.keys())[list(employment_mapping.values()).index(employment_status)]
 selected_smoking_status = list(smoking_mapping.keys())[list(smoking_mapping.values()).index(smoking_status)]
 
-# Use these mapped numerical values in your prediction input
-input_data = [age, selected_marital_status, selected_education_level, selected_employment_status, selected_smoking_status, income]
-
 # Button to trigger prediction
 if st.button("Predict"):
-    # Prepare the input data for prediction
-    input_data = [age, marital_status, education_level, employment_status, smoking_status, income]
+    # Prepare the input data for prediction with mapped numerical values
+    input_data = [age, selected_marital_status, selected_education_level, selected_employment_status, selected_smoking_status, income]
+    
+    # Predict and get accuracy
     prediction, accuracy = train_and_predict(input_data)
     
     # Interpret the prediction result
